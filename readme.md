@@ -40,9 +40,9 @@ const swup = new Swup({
     new SwupRouteNamePlugin({
       routes: [
         { name: 'home', path: '/:lang?' },
-        { name: 'project', path: '/:lang/project/:slug' },
         { name: 'projects', path: '/:lang/projects' },
-        { name: 'any', path: '(.*)' },
+        { name: 'project', path: '/:lang/project/:slug' },
+        { name: 'any', path: '(.*)' }
       ]
     })
   ]
@@ -63,9 +63,10 @@ You can then choose between animations based on the identified routes.
 .transition-default {
   transition: 300ms opacity ease-in-out, 300ms transform ease-in-out;
   opacity: 1;
+  transform: none;
 }
 
-/* Standard transition: fade out */
+/* Standard transition: fade */
 html.is-animating .transition-default {
   opacity: 0;
 }
@@ -83,9 +84,7 @@ All options with their default values:
 
 ```javascript
 {
-  routes: [
-    { name: 'any', path: '(.*)' }
-  ],
+  routes: [{ name: 'any', path: '(.*)' }],
   unknownName: 'unknown',
   pathToRegexpOptions: {}
 }
