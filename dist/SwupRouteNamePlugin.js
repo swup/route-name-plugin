@@ -155,18 +155,25 @@ var SwupRouteNamePlugin = function (_Plugin) {
 			    from = _this$swup$transition.from,
 			    to = _this$swup$transition.to;
 
+			var unknown = _this.options.unknownName;
+
 			var routeFrom = _this.getRouteName(from);
 			var routeTo = _this.getRouteName(to);
 
-			document.documentElement.classList.add('from-route-' + routeFrom);
-			document.documentElement.classList.add('to-route-' + routeTo);
+			if (routeFrom || unknown) {
+				document.documentElement.classList.add('from-route-' + (routeFrom || unknown));
+			}
+			if (routeTo || unknown) {
+				document.documentElement.classList.add('to-route-' + (routeTo || unknown));
+			}
+			if (routeFrom && routeFrom === routeTo) {
+				document.documentElement.classList.add('to-same-route');
+			}
 
-			_this.swup.log('Route: \'' + routeFrom + '\' to \'' + routeTo + '\'');
+			_this.swup.log('Route: \'' + (routeFrom || unknown || '(unknown)') + '\' to \'' + (routeTo || unknown || '(unknown)') + '\'');
 		};
 
 		_this.removeRouteNameClasses = function () {
-			// remove "from-route-{name}" classes
-			// swup removes "to-" classes on its own
 			document.documentElement.className.split(' ').filter(function (classItem) {
 				return classItem.indexOf('from-route-') === 0;
 			}).forEach(function (classItem) {
@@ -180,11 +187,7 @@ var SwupRouteNamePlugin = function (_Plugin) {
 			unknownName: 'unknown'
 		}, options);
 
-		_this.routePatterns = _this.options.routes.map(function (route) {
-			var name = route.name.replace(/[!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~\s]/g, '');
-			var matches = (0, _pathToRegexp.match)(route.path, _this.options.pathToRegexpOptions);
-			return _extends({}, route, { name: name, matches: matches });
-		});
+		_this.compileRoutePatterns();
 		return _this;
 	}
 
@@ -200,14 +203,38 @@ var SwupRouteNamePlugin = function (_Plugin) {
 			this.swup.off('animationOutStart', this.addRouteNameClasses);
 			this.swup.off('animationInDone', this.removeRouteNameClasses);
 		}
+
+		// Compile route patterns to match functions and valid classnames
+
+	}, {
+		key: 'compileRoutePatterns',
+		value: function compileRoutePatterns() {
+			var _this2 = this;
+
+			this.routePatterns = this.options.routes.map(function (route) {
+				var name = route.name.replace(/[!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~\s]/g, '');
+				var matches = (0, _pathToRegexp.match)(route.path, _this2.options.pathToRegexpOptions);
+				return _extends({}, route, { name: name, matches: matches });
+			});
+		}
+
+		// Get route name for any path
+
 	}, {
 		key: 'getRouteName',
 		value: function getRouteName(path) {
 			var matchedRoute = this.routePatterns.find(function (route) {
 				return route.matches(path);
 			}) || {};
-			return matchedRoute.name || this.options.unknownName;
+			return matchedRoute.name || null;
 		}
+
+		// Add `from-route-*` and `to-route-*` classnames to html tag
+
+
+		// Remove `from-route-*` classnames from html tag
+		// Note: swup removes `to-*` classnames on its own already
+
 	}]);
 
 	return SwupRouteNamePlugin;
