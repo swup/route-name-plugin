@@ -78,6 +78,13 @@ html.is-animating.from-route-home .transition-default {
 }
 ```
 
+If from and to routes are identical, it will add the class `to-same-route`. This
+is mostly useful to disable transitions between pages with identical layout.
+
+```html
+<html class="is-animating from-route-project to-route-project to-same-route">
+```
+
 ## Options
 
 All options with their default values:

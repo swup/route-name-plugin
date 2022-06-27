@@ -39,19 +39,28 @@ export default class SwupRouteNamePlugin extends Plugin {
 	// Get route name for any path
 	getRouteName(path) {
 		const matchedRoute = this.routePatterns.find((route) => route.matches(path)) || {};
-		return matchedRoute.name || this.options.unknownName;
+		return matchedRoute.name || null;
 	}
 
 	// Add `from-route-*` and `to-route-*` classnames to html tag
 	addRouteNameClasses = () => {
 		const { from, to } = this.swup.transition;
+		const unknown = this.options.unknownName;
+
 		const routeFrom = this.getRouteName(from);
 		const routeTo = this.getRouteName(to);
 
-		document.documentElement.classList.add(`from-route-${routeFrom}`);
-		document.documentElement.classList.add(`to-route-${routeTo}`);
+		if (routeFrom || unknown) {
+			document.documentElement.classList.add(`from-route-${routeFrom || unknown}`);
+		}
+		if (routeTo || unknown) {
+			document.documentElement.classList.add(`to-route-${routeTo || unknown}`);
+		}
+		if (routeFrom && routeFrom === routeTo) {
+			document.documentElement.classList.add('to-same-route');
+		}
 
-		this.swup.log(`Route: '${routeFrom}' to '${routeTo}'`);
+		this.swup.log(`Route: '${routeFrom || unknown || '(unknown)'}' to '${routeTo || unknown || '(unknown)'}'`);
 	};
 
 	// Remove `from-route-*` classnames from html tag
