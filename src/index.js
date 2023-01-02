@@ -9,9 +9,10 @@ export default class SwupRouteNamePlugin extends Plugin {
 		super();
 
 		this.options = {
-			routes: [{ name: 'any', path: '(.*)' }],
-			pathToRegexpOptions: {},
-			unknownName: 'unknown',
+			routes: [],
+			unknownRoute: 'unknown',
+			matchOptions: {},
+			pathClasses: false,
 			...options
 		};
 
@@ -34,7 +35,7 @@ export default class SwupRouteNamePlugin extends Plugin {
 	compileRoutePatterns() {
 		this.routePatterns = this.options.routes.map((route) => {
 			const name = route.name.replace(/[!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~\s]/g, '');
-			const matches = match(route.path, this.options.pathToRegexpOptions);
+			const matches = match(route.path, this.options.matchOptions);
 			return { ...route, name, matches };
 		});
 	}
@@ -53,6 +54,10 @@ export default class SwupRouteNamePlugin extends Plugin {
 	// Add `from-*` and `to-*` classnames for slugified path
 
 	addPathClasses = () => {
+		if (!this.options.pathClasses) {
+			return;
+		}
+
 		const { from, to } = this.swup.transition;
 
 		const fromPath = this.getPathName(from);
@@ -64,8 +69,12 @@ export default class SwupRouteNamePlugin extends Plugin {
 
 	// Add `from-route-*` and `to-route-*` classnames to html tag
 	addRouteClasses = () => {
+		if (!this.options.routes.length) {
+			return;
+		}
+
 		const { from, to } = this.swup.transition;
-		const unknown = this.options.unknownName;
+		const unknown = this.options.unknownRoute;
 
 		const fromRoute = this.getRouteName(from);
 		const toRoute = this.getRouteName(to);
