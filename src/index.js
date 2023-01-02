@@ -80,15 +80,17 @@ export default class SwupRouteNamePlugin extends Plugin {
 			document.documentElement.classList.add('to-same-route');
 		}
 
-		this.swup.log(`Route: '${fromRoute || unknown || '(unknown)'}' to '${toRoute || unknown || '(unknown)'}'`);
+		this.swup.log(
+			`Route: '${fromRoute || unknown || '(unknown)'}'` +
+				` to '${toRoute || unknown || '(unknown)'}'`
+		);
 	};
 
 	// Remove `from-*` and `from-route-*` classnames from html tag
 	// Note: swup removes `to-*` classnames on its own already
 	removeClasses = () => {
-		const removeClasses = document.documentElement.className.split(' ').filter(
-			(classItem) => classItem.startsWith('from-')
-		);
+		const htmlClasses = document.documentElement.className.split(' ');
+		const removeClasses = htmlClasses.filter((classItem) => classItem.startsWith('from-'));
 		document.documentElement.classList.remove(...removeClasses);
 	};
 }
