@@ -157,6 +157,10 @@ var SwupRouteNamePlugin = function (_Plugin) {
 		_this.name = 'SwupRouteNamePlugin';
 
 		_this.addPathClasses = function () {
+			if (!_this.options.pathClasses) {
+				return;
+			}
+
 			var _this$swup$transition = _this.swup.transition,
 			    from = _this$swup$transition.from,
 			    to = _this$swup$transition.to;
@@ -170,11 +174,15 @@ var SwupRouteNamePlugin = function (_Plugin) {
 		};
 
 		_this.addRouteClasses = function () {
+			if (!_this.options.routes.length) {
+				return;
+			}
+
 			var _this$swup$transition2 = _this.swup.transition,
 			    from = _this$swup$transition2.from,
 			    to = _this$swup$transition2.to;
 
-			var unknown = _this.options.unknownName;
+			var unknown = _this.options.unknownRoute;
 
 			var fromRoute = _this.getRouteName(from);
 			var toRoute = _this.getRouteName(to);
@@ -203,9 +211,10 @@ var SwupRouteNamePlugin = function (_Plugin) {
 		};
 
 		_this.options = _extends({
-			routes: [{ name: 'any', path: '(.*)' }],
-			pathToRegexpOptions: {},
-			unknownName: 'unknown'
+			routes: [],
+			unknownRoute: 'unknown',
+			matchOptions: {},
+			pathClasses: false
 		}, options);
 
 		_this.compileRoutePatterns();
@@ -236,7 +245,7 @@ var SwupRouteNamePlugin = function (_Plugin) {
 
 			this.routePatterns = this.options.routes.map(function (route) {
 				var name = route.name.replace(/[!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~\s]/g, '');
-				var matches = (0, _pathToRegexp.match)(route.path, _this2.options.pathToRegexpOptions);
+				var matches = (0, _pathToRegexp.match)(route.path, _this2.options.matchOptions);
 				return _extends({}, route, { name: name, matches: matches });
 			});
 		}
