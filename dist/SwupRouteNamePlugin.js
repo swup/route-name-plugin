@@ -189,13 +189,14 @@ var SwupRouteNamePlugin = function (_Plugin) {
 				document.documentElement.classList.add('to-same-route');
 			}
 
-			_this.swup.log('Route: \'' + (fromRoute || unknown || '(unknown)') + '\' to \'' + (toRoute || unknown || '(unknown)') + '\'');
+			_this.swup.log('Route: \'' + (fromRoute || unknown || '(unknown)') + '\'' + (' to \'' + (toRoute || unknown || '(unknown)') + '\''));
 		};
 
 		_this.removeClasses = function () {
 			var _document$documentEle;
 
-			var removeClasses = document.documentElement.className.split(' ').filter(function (classItem) {
+			var htmlClasses = document.documentElement.className.split(' ');
+			var removeClasses = htmlClasses.filter(function (classItem) {
 				return classItem.startsWith('from-');
 			});
 			(_document$documentEle = document.documentElement.classList).remove.apply(_document$documentEle, _toConsumableArray(removeClasses));
