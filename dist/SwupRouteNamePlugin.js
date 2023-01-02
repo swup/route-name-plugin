@@ -157,7 +157,7 @@ var SwupRouteNamePlugin = function (_Plugin) {
 		_this.name = 'SwupRouteNamePlugin';
 
 		_this.addPathClasses = function () {
-			if (!_this.options.pathClasses) {
+			if (!_this.options.paths) {
 				return;
 			}
 
@@ -214,7 +214,7 @@ var SwupRouteNamePlugin = function (_Plugin) {
 			routes: [],
 			unknownRoute: 'unknown',
 			matchOptions: {},
-			pathClasses: false
+			paths: false
 		}, options);
 
 		_this.compileRoutePatterns();
