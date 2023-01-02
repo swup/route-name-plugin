@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@swup/plugin": "^1.0.1",
-    "path-to-regexp": "^6.2.1"
+    "path-to-regexp": "^6.2.1",
+    "swup": "^2.0.13"
   }
 }
