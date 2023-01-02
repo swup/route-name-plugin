@@ -12,7 +12,7 @@ export default class SwupRouteNamePlugin extends Plugin {
 			routes: [],
 			unknownRoute: 'unknown',
 			matchOptions: {},
-			pathClasses: false,
+			paths: false,
 			...options
 		};
 
@@ -54,7 +54,7 @@ export default class SwupRouteNamePlugin extends Plugin {
 	// Add `from-*` and `to-*` classnames for slugified path
 
 	addPathClasses = () => {
-		if (!this.options.pathClasses) {
+		if (!this.options.paths) {
 			return;
 		}
 

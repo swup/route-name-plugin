@@ -93,7 +93,7 @@ is mostly useful to disable transitions between pages with identical layout.
 
 ### Paths
 
-When the `pathClasses` option is enabled, the plugin will add `from-*` and
+When the `paths` option is enabled, the plugin will add `from-*` and
 `to-*` classes to the `html` tag, reflecting the raw URLs of the current and
 next page.
 
@@ -111,7 +111,7 @@ All options with their default values:
   routes: [],
   unknownRoute: 'unknown',
   matchOptions: {},
-  pathClasses: false
+  paths: false
 }
 ```
 
@@ -132,7 +132,7 @@ Default route name if no match was found among available patterns.
 Options passed to [path-to-regexp](https://www.npmjs.com/package/path-to-regexp)
 for matching. Useful if you want to change case sensitivity, delimiters, etc.
 
-### pathClasses
+### paths
 
 By default, the plugin will only add classnames for identified named routes.
 To also add simple `from-*` and `to-*` for the raw URLs of the previous and
