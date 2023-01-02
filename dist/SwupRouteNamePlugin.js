@@ -130,7 +130,13 @@ var _plugin2 = _interopRequireDefault(_plugin);
 
 var _pathToRegexp = __webpack_require__(3);
 
+var _classify = __webpack_require__(4);
+
+var _classify2 = _interopRequireDefault(_classify);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -150,35 +156,49 @@ var SwupRouteNamePlugin = function (_Plugin) {
 
 		_this.name = 'SwupRouteNamePlugin';
 
-		_this.addRouteNameClasses = function () {
+		_this.addPathClasses = function () {
 			var _this$swup$transition = _this.swup.transition,
 			    from = _this$swup$transition.from,
 			    to = _this$swup$transition.to;
 
+
+			var fromPath = _this.getPathName(from);
+			var toPath = _this.getPathName(to);
+
+			document.documentElement.classList.add('from-' + fromPath);
+			document.documentElement.classList.add('to-' + toPath);
+		};
+
+		_this.addRouteClasses = function () {
+			var _this$swup$transition2 = _this.swup.transition,
+			    from = _this$swup$transition2.from,
+			    to = _this$swup$transition2.to;
+
 			var unknown = _this.options.unknownName;
 
-			var routeFrom = _this.getRouteName(from);
-			var routeTo = _this.getRouteName(to);
+			var fromRoute = _this.getRouteName(from);
+			var toRoute = _this.getRouteName(to);
 
-			if (routeFrom || unknown) {
-				document.documentElement.classList.add('from-route-' + (routeFrom || unknown));
+			if (fromRoute || unknown) {
+				document.documentElement.classList.add('from-route-' + (fromRoute || unknown));
 			}
-			if (routeTo || unknown) {
-				document.documentElement.classList.add('to-route-' + (routeTo || unknown));
+			if (toRoute || unknown) {
+				document.documentElement.classList.add('to-route-' + (toRoute || unknown));
 			}
-			if (routeFrom && routeFrom === routeTo) {
+			if (fromRoute && fromRoute === toRoute) {
 				document.documentElement.classList.add('to-same-route');
 			}
 
-			_this.swup.log('Route: \'' + (routeFrom || unknown || '(unknown)') + '\' to \'' + (routeTo || unknown || '(unknown)') + '\'');
+			_this.swup.log('Route: \'' + (fromRoute || unknown || '(unknown)') + '\' to \'' + (toRoute || unknown || '(unknown)') + '\'');
 		};
 
-		_this.removeRouteNameClasses = function () {
-			document.documentElement.className.split(' ').filter(function (classItem) {
-				return classItem.indexOf('from-route-') === 0;
-			}).forEach(function (classItem) {
-				document.documentElement.classList.remove(classItem);
+		_this.removeClasses = function () {
+			var _document$documentEle;
+
+			var removeClasses = document.documentElement.className.split(' ').filter(function (classItem) {
+				return classItem.startsWith('from-');
 			});
+			(_document$documentEle = document.documentElement.classList).remove.apply(_document$documentEle, _toConsumableArray(removeClasses));
 		};
 
 		_this.options = _extends({
@@ -194,14 +214,16 @@ var SwupRouteNamePlugin = function (_Plugin) {
 	_createClass(SwupRouteNamePlugin, [{
 		key: 'mount',
 		value: function mount() {
-			this.swup.on('animationOutStart', this.addRouteNameClasses);
-			this.swup.on('animationInDone', this.removeRouteNameClasses);
+			this.swup.on('animationOutStart', this.addPathClasses);
+			this.swup.on('animationOutStart', this.addRouteClasses);
+			this.swup.on('animationInDone', this.removeClasses);
 		}
 	}, {
 		key: 'unmount',
 		value: function unmount() {
-			this.swup.off('animationOutStart', this.addRouteNameClasses);
-			this.swup.off('animationInDone', this.removeRouteNameClasses);
+			this.swup.off('animationOutStart', this.addPathClasses);
+			this.swup.off('animationOutStart', this.addRouteClasses);
+			this.swup.off('animationInDone', this.removeClasses);
 		}
 
 		// Compile route patterns to match functions and valid classnames
@@ -223,16 +245,28 @@ var SwupRouteNamePlugin = function (_Plugin) {
 	}, {
 		key: 'getRouteName',
 		value: function getRouteName(path) {
-			var matchedRoute = this.routePatterns.find(function (route) {
+			var _ref = this.routePatterns.find(function (route) {
 				return route.matches(path);
-			}) || {};
-			return matchedRoute.name || null;
+			}) || {},
+			    name = _ref.name;
+
+			return name || null;
 		}
+
+		// Get path name for any path
+
+	}, {
+		key: 'getPathName',
+		value: function getPathName(path) {
+			return (0, _classify2.default)(path, 'homepage');
+		}
+
+		// Add `from-*` and `to-*` classnames for slugified path
 
 		// Add `from-route-*` and `to-route-*` classnames to html tag
 
 
-		// Remove `from-route-*` classnames from html tag
+		// Remove `from-*` and `from-route-*` classnames from html tag
 		// Note: swup removes `to-*` classnames on its own already
 
 	}]);
@@ -709,6 +743,30 @@ function pathToRegexp(path, keys, options) {
     return stringToRegexp(path, keys, options);
 }
 //# sourceMappingURL=index.js.map
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var classify = function classify(text) {
+	var output = text.toString().toLowerCase().replace(/\s+/g, '-') // Replace spaces with -
+	.replace(/\//g, '-') // Replace / with -
+	.replace(/[^\w\-]+/g, '') // Remove all non-word chars
+	.replace(/\-\-+/g, '-') // Replace multiple - with single -
+	.replace(/^-+/, '') // Trim - from start of text
+	.replace(/-+$/, ''); // Trim - from end of text
+	if (output[0] === '/') output = output.splice(1);
+	if (output === '') output = 'homepage';
+	return output;
+};
+
+exports.default = classify;
 
 /***/ })
 /******/ ]);
