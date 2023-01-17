@@ -1,6 +1,6 @@
 import Plugin from '@swup/plugin';
 import { match } from 'path-to-regexp';
-import classify from 'swup/lib/helpers/classify';
+import { classify } from 'swup';
 
 export default class SwupRouteNamePlugin extends Plugin {
 	name = 'SwupRouteNamePlugin';
