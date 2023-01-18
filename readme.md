@@ -13,22 +13,20 @@ wildcard URLs.
 
 ## Installation
 
-This plugin can be installed with npm
+Install the plugin from npm and import it into your bundle.
 
 ```bash
 npm install @swup/route-name-plugin
 ```
 
-and included with import
-
-```shell
+```js
 import SwupRouteNamePlugin from '@swup/route-name-plugin';
 ```
 
-or included from the dist folder
+Or include the minified production file from a CDN:
 
 ```html
-<script src="./dist/SwupRouteNamePlugin.js"></script>
+<script src="https://unpkg.com/@swup/route-name-plugin@2"></script>
 ```
 
 ## Usage
