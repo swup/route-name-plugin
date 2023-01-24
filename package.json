@@ -30,11 +30,11 @@
     "url": "https://github.com/swup/route-name-plugin.git"
   },
   "dependencies": {
-    "@swup/plugin": "2.0.0-rc.3",
+    "@swup/plugin": "^2.0.0",
     "path-to-regexp": "^6.2.1"
   },
   "devDependencies": {
-    "swup": "3.0.0-rc.4"
+    "swup": "^3.0.0"
   },
   "peerDependencies": {
     "swup": "^3.0.0"
