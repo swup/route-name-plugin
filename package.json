@@ -1,7 +1,7 @@
 {
   "name": "@swup/route-name-plugin",
   "amdName": "SwupRouteNamePlugin",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Use named routes for swup animation classes",
   "type": "module",
   "source": "src/index.js",
@@ -39,5 +39,8 @@
   "peerDependencies": {
     "swup": "^3.0.0"
   },
+  "browserslist": [
+    "extends @swup/browserslist-config"
+  ],
   "prettier": "@swup/prettier-config"
 }
