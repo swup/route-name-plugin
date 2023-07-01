@@ -4,6 +4,8 @@ import { classify, matchPath } from 'swup';
 export default class SwupRouteNamePlugin extends Plugin {
 	name = 'SwupRouteNamePlugin';
 
+	requires = { swup: '>=4' };
+
 	defaults = {
 		routes: [],
 		unknownRoute: 'unknown',
