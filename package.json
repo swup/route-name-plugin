@@ -1,7 +1,7 @@
 {
   "name": "@swup/route-name-plugin",
   "amdName": "SwupRouteNamePlugin",
-  "version": "3.0.2",
+  "version": "4.0.0",
   "description": "A swup plugin for named routes and route-based animation classes",
   "type": "module",
   "source": "src/index.js",
