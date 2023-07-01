@@ -1,43 +1,47 @@
 import Plugin from '@swup/plugin';
-import { match } from 'path-to-regexp';
-import { classify } from 'swup';
+import { classify, matchPath } from 'swup';
 
 export default class SwupRouteNamePlugin extends Plugin {
 	name = 'SwupRouteNamePlugin';
 
+	defaults = {
+		routes: [],
+		unknownRoute: 'unknown',
+		matchOptions: {},
+		paths: false
+	};
+
 	constructor(options = {}) {
 		super();
-
-		this.options = {
-			routes: [],
-			unknownRoute: 'unknown',
-			matchOptions: {},
-			paths: false,
-			...options
-		};
-
+		this.options = { ...this.defaults, ...options };
 		this.compileRoutePatterns();
 	}
 
 	mount() {
-		this.swup.on('animationOutStart', this.addPathClasses);
-		this.swup.on('animationOutStart', this.addRouteClasses);
-		this.swup.on('animationInDone', this.removeClasses);
+		this.swup.hooks.before('transitionStart', this.addRouteKey);
+		this.swup.hooks.on('animationOutStart', this.addPathClasses);
+		this.swup.hooks.on('animationOutStart', this.addRouteClasses);
+		this.swup.hooks.on('animationInDone', this.removeClasses);
 	}
 
 	unmount() {
-		this.swup.off('animationOutStart', this.addPathClasses);
-		this.swup.off('animationOutStart', this.addRouteClasses);
-		this.swup.off('animationInDone', this.removeClasses);
+		this.swup.hooks.off('transitionStart', this.addRouteKey);
+		this.swup.hooks.off('animationOutStart', this.addPathClasses);
+		this.swup.hooks.off('animationOutStart', this.addRouteClasses);
+		this.swup.hooks.off('animationInDone', this.removeClasses);
 	}
 
 	// Compile route patterns to match functions and valid classnames
 	compileRoutePatterns() {
 		this.routePatterns = this.options.routes.map((route) => {
-			const name = route.name.replace(/[!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~\s]/g, '');
-			const matches = match(route.path, this.options.matchOptions);
+			const name = this.sanitizeRouteName(route.name);
+			const matches = matchPath(route.path, this.options.matchOptions);
 			return { ...route, name, matches };
 		});
+	}
+
+	sanitizeRouteName(name) {
+		return name.replace(/[!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~\s]/g, '');
 	}
 
 	// Get route name for any path
@@ -48,53 +52,55 @@ export default class SwupRouteNamePlugin extends Plugin {
 
 	// Get path name for any path
 	getPathName(path) {
-		const className = classify(path) || 'homepage';
-		// Fix error introduced in swup 3.0.0-rc.3, should be fixed by 3.0 final but let's make sure
-		return className.replace(/^-+|-+$/g, ''); // trim '-' from edges
+		return classify(path) || 'homepage';
 	}
 
-	// Add `from-*` and `to-*` classnames for slugified path
-
-	addPathClasses = () => {
-		if (!this.options.paths) {
-			return;
-		}
-
-		const { from, to } = this.swup.transition;
-
-		const fromPath = this.getPathName(from);
-		const toPath = this.getPathName(to);
-
-		document.documentElement.classList.add(`from-${fromPath}`);
-		document.documentElement.classList.add(`to-${toPath}`);
-	};
-
-	// Add `from-route-*` and `to-route-*` classnames to html tag
-	addRouteClasses = () => {
+	// Add a `route` key to the context object's `from` and `to` properties
+	addRouteKey = (context) => {
 		if (!this.options.routes.length) {
 			return;
 		}
 
-		const { from, to } = this.swup.transition;
+		context.from.route = this.getRouteName(context.from.url);
+		context.to.route = this.getRouteName(context.to.url);
+		this.swup.log(
+			`Route: '${context.from.route || unknown || '(unknown)'}'` +
+				` to '${context.to.route || unknown || '(unknown)'}'`
+		);
+	};
+
+	// Add `from-route-*` and `to-route-*` classnames to html tag
+	addRouteClasses = (context) => {
+		if (!this.options.routes.length) {
+			return;
+		}
+
+		const from = context.from.route;
+		const to = context.to.route;
 		const unknown = this.options.unknownRoute;
 
-		const fromRoute = this.getRouteName(from);
-		const toRoute = this.getRouteName(to);
-
-		if (fromRoute || unknown) {
-			document.documentElement.classList.add(`from-route-${fromRoute || unknown}`);
+		if (from || unknown) {
+			document.documentElement.classList.add(`from-route-${from || unknown}`);
 		}
-		if (toRoute || unknown) {
-			document.documentElement.classList.add(`to-route-${toRoute || unknown}`);
+		if (to || unknown) {
+			document.documentElement.classList.add(`to-route-${to || unknown}`);
 		}
-		if (fromRoute && fromRoute === toRoute) {
+		if (from && from === to) {
 			document.documentElement.classList.add('to-same-route');
 		}
+	};
 
-		this.swup.log(
-			`Route: '${fromRoute || unknown || '(unknown)'}'` +
-				` to '${toRoute || unknown || '(unknown)'}'`
-		);
+	// Add `from-*` and `to-*` classnames for slugified path
+	addPathClasses = (context) => {
+		if (!this.options.paths) {
+			return;
+		}
+
+		const from = this.getPathName(context.from.url);
+		const to = this.getPathName(context.to.url);
+
+		document.documentElement.classList.add(`from-${from}`);
+		document.documentElement.classList.add(`to-${to}`);
 	};
 
 	// Remove `from-*` and `from-route-*` classnames from html tag
