@@ -1,5 +1,5 @@
 import Plugin from '@swup/plugin';
-import { classify, matchPath } from 'swup';
+import { classify, getCurrentUrl, matchPath, updateHistoryRecord } from 'swup';
 
 export default class SwupRouteNamePlugin extends Plugin {
 	name = 'SwupRouteNamePlugin';
@@ -17,12 +17,17 @@ export default class SwupRouteNamePlugin extends Plugin {
 		super();
 		this.options = { ...this.defaults, ...options };
 		this.compileRoutePatterns();
+
+		// Save route to current history record
+		this.swup.context.to.route = this.getRouteName(getCurrentUrl());
+		this.updateHistory();
 	}
 
 	mount() {
 		this.swup.hooks.before('transitionStart', this.addRouteKey);
 		this.swup.hooks.on('animationOutStart', this.addPathClasses);
 		this.swup.hooks.on('animationOutStart', this.addRouteClasses);
+		this.swup.hooks.on('replaceContent', this.updateHistory);
 		this.swup.hooks.on('animationInDone', this.removeClasses);
 	}
 
@@ -30,6 +35,7 @@ export default class SwupRouteNamePlugin extends Plugin {
 		this.swup.hooks.off('transitionStart', this.addRouteKey);
 		this.swup.hooks.off('animationOutStart', this.addPathClasses);
 		this.swup.hooks.off('animationOutStart', this.addRouteClasses);
+		this.swup.hooks.off('replaceContent', this.updateHistory);
 		this.swup.hooks.off('animationInDone', this.removeClasses);
 	}
 
@@ -111,5 +117,10 @@ export default class SwupRouteNamePlugin extends Plugin {
 		const htmlClasses = document.documentElement.className.split(' ');
 		const removeClasses = htmlClasses.filter((classItem) => classItem.startsWith('from-'));
 		document.documentElement.classList.remove(...removeClasses);
+	};
+
+	updateHistory = () => {
+		const { route } = this.swup.context.to;
+		updateHistoryRecord(undefined, { route });
 	};
 }
