@@ -24,19 +24,19 @@ export default class SwupRouteNamePlugin extends Plugin {
 	}
 
 	mount() {
-		this.swup.hooks.before('transitionStart', this.addRouteKey);
-		this.swup.hooks.on('animationOutStart', this.addPathClasses);
-		this.swup.hooks.on('animationOutStart', this.addRouteClasses);
-		this.swup.hooks.on('replaceContent', this.updateHistory);
-		this.swup.hooks.on('animationInDone', this.removeClasses);
+		this.swup.hooks.before('visit:start', this.addRouteKey);
+		this.swup.hooks.on('animation:out:start', this.addPathClasses);
+		this.swup.hooks.on('animation:out:start', this.addRouteClasses);
+		this.swup.hooks.on('content:replace', this.updateHistory);
+		this.swup.hooks.on('animation:in:end', this.removeClasses);
 	}
 
 	unmount() {
-		this.swup.hooks.off('transitionStart', this.addRouteKey);
-		this.swup.hooks.off('animationOutStart', this.addPathClasses);
-		this.swup.hooks.off('animationOutStart', this.addRouteClasses);
-		this.swup.hooks.off('replaceContent', this.updateHistory);
-		this.swup.hooks.off('animationInDone', this.removeClasses);
+		this.swup.hooks.off('visit:start', this.addRouteKey);
+		this.swup.hooks.off('animation:out:start', this.addPathClasses);
+		this.swup.hooks.off('animation:out:start', this.addRouteClasses);
+		this.swup.hooks.off('content:replace', this.updateHistory);
+		this.swup.hooks.off('animation:in:end', this.removeClasses);
 	}
 
 	// Compile route patterns to match functions and valid classnames
