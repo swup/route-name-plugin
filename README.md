@@ -52,7 +52,7 @@ const swup = new Swup({
 ## Context
 
 The plugin will add a `route` property to the `from` and `to` elements of the
-[context object](https://swup.js.org/context/) available in all hooks.
+[visit object](https://swup.js.org/visit/) available in all hooks.
 
 ```js
 {
@@ -64,9 +64,9 @@ The plugin will add a `route` property to the `from` and `to` elements of the
 Inside a hook handler, you can access them to modify your transitions as required.
 
 ```js
-swup.hooks.before('transitionStart', (context) => {
-  console.log('Coming from route', context.from.route);
-  console.log('Going to route', context.to.route);
+swup.hooks.on('visit:start', (visit) => {
+  console.log('Coming from route', visit.from.route);
+  console.log('Going to route', visit.to.route);
 });
 ```
 
