@@ -14,6 +14,8 @@ export default class SwupRouteNamePlugin extends Plugin {
 	};
 
 	constructor(options = {}) {
+		super();
+
 		this.options = { ...this.defaults, ...options };
 
 		this.compileRoutePatterns();
