@@ -15,17 +15,15 @@ export default class SwupRouteNamePlugin extends Plugin {
 
 	constructor(options = {}) {
 		super();
-
 		this.options = { ...this.defaults, ...options };
-
-		this.compileRoutePatterns();
-
-		// Save route to current history record
-		this.swup.visit.to.route = this.getRouteName(getCurrentUrl());
-		this.updateHistory(this.swup.visit);
+		this.routes = this.compileRoutePatterns();
 	}
 
 	mount() {
+		// Save route to current history record
+		this.swup.visit.to.route = this.getRouteName(getCurrentUrl());
+		this.updateHistory(this.swup.visit);
+
 		this.before('visit:start', this.addRouteKey);
 		this.on('animation:out:start', this.addPathClasses);
 		this.on('animation:out:start', this.addRouteClasses);
@@ -35,7 +33,7 @@ export default class SwupRouteNamePlugin extends Plugin {
 
 	// Compile route patterns to match functions and valid classnames
 	compileRoutePatterns() {
-		this.routePatterns = this.options.routes.map((route) => {
+		return this.options.routes.map((route) => {
 			const name = this.sanitizeRouteName(route.name);
 			const matches = matchPath(route.path, this.options.matchOptions);
 			return { ...route, name, matches };
@@ -48,7 +46,7 @@ export default class SwupRouteNamePlugin extends Plugin {
 
 	// Get route name for any path
 	getRouteName(path) {
-		const { name } = this.routePatterns.find((route) => route.matches(path)) || {};
+		const { name } = this.routes.find((route) => route.matches(path)) || {};
 		return name || null;
 	}
 
