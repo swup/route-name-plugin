@@ -1,15 +1,14 @@
 # Swup Route Name Plugin
 
-Use path and route names to allow choosing between swup animations.
+A [swup](https://swup.js.org) plugin for named routes and route-based animation classes.
 
-This plugin will add classnames to the html tag reflecting the previous and
-next page's URL, e.g. `from-about` or `to-team`.
+- Use path and route names to allow choosing between swup animations
+- Given a list of URL patterns, it identifies\* named routes and adds them to the context object
+- Adds classnames to the html tag reflecting the previous and next page's:
+  - raw url in slug form, e.g. `from-about` and `to-team`
+  - matched route name, e.g. `from-route-home` and `to-route-project`
 
-If given a list of URL patterns, it will use
-[path-to-regexp](https://www.npmjs.com/package/path-to-regexp) to identify
-named routes and will use those for classnames, e.g. `from-route-home` or
-`to-route-project`. This is especially handy for multi-language or
-wildcard URLs.
+\* Uses [path-to-regexp](https://www.npmjs.com/package/path-to-regexp) under the hood.
 
 ## Installation
 
@@ -26,12 +25,14 @@ import SwupRouteNamePlugin from '@swup/route-name-plugin';
 Or include the minified production file from a CDN:
 
 ```html
-<script src="https://unpkg.com/@swup/route-name-plugin@2"></script>
+<script src="https://unpkg.com/@swup/route-name-plugin@4"></script>
 ```
 
 ## Usage
 
 To run this plugin, include an instance in the swup options.
+
+Pass in a list of route patterns to match URLs against.
 
 ```javascript
 const swup = new Swup({
@@ -48,13 +49,33 @@ const swup = new Swup({
 });
 ```
 
+## Context
+
+The plugin will add a `route` property to the `from` and `to` elements of the
+[visit object](https://swup.js.org/visit/) available in all hooks.
+
+```js
+{
+  from: { url: '/en', route: 'home' },
+  to: { url: '/en/project/lorem', route: 'project' }
+}
+```
+
+Inside a hook handler, you can access them to modify your transitions as required.
+
+```js
+swup.hooks.on('visit:start', (visit) => {
+  console.log('Coming from route', visit.from.route);
+  console.log('Going to route', visit.to.route);
+});
+```
+
 ## Classes
 
 ### Named routes
 
-When passed a list of `routes`, the plugin will add `from-route-*` and
-`to-route-*` classes to the `html` tag, reflecting the identified route names
-of the current and next page.
+The plugin will add `from-route-*` and `to-route-*` classes to the `html` tag,
+reflecting the identified route names of the current and next page.
 
 ```html
 <!-- Navigating from /en/ to /en/project/some-project/ -->

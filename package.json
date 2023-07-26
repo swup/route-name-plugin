@@ -1,8 +1,8 @@
 {
   "name": "@swup/route-name-plugin",
   "amdName": "SwupRouteNamePlugin",
-  "version": "3.0.2",
-  "description": "Use named routes for swup animation classes",
+  "version": "4.0.0",
+  "description": "A swup plugin for named routes and route-based animation classes",
   "type": "module",
   "source": "src/index.js",
   "main": "./dist/index.cjs",
@@ -17,7 +17,7 @@
     "dev": "swup-plugin dev",
     "lint": "swup-plugin lint",
     "format": "swup-plugin format",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "author": {
     "name": "Philipp Daun",
@@ -30,14 +30,10 @@
     "url": "https://github.com/swup/route-name-plugin.git"
   },
   "dependencies": {
-    "@swup/plugin": "^2.0.0",
-    "path-to-regexp": "^6.2.1"
-  },
-  "devDependencies": {
-    "swup": "^3.0.0"
+    "@swup/plugin": "^3.0.0"
   },
   "peerDependencies": {
-    "swup": "^3.0.0"
+    "swup": "^4.0.0"
   },
   "browserslist": [
     "extends @swup/browserslist-config"
