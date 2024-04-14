@@ -20,10 +20,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "swup-plugin build",
-    "dev": "swup-plugin dev",
-    "lint": "swup-plugin lint",
-    "format": "swup-plugin format",
+    "build": "swup package:build",
+    "dev": "swup package:dev",
+    "lint": "swup package:lint",
+    "format": "swup package:format",
     "prepublishOnly": "npm run build",
     "test": "npm run test:unit",
     "test:unit": "vitest run --config ./tests/config/vitest.config.ts",
