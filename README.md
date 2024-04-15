@@ -77,6 +77,7 @@ swup.hooks.on('visit:start', (visit) => {
 The plugin will add `from-route-*` and `to-route-*` classes to the `html` tag,
 reflecting the identified route names of the current and next page.
 
+<!-- prettier-ignore -->
 ```html
 <!-- Navigating from /en/ to /en/project/some-project/ -->
 <html class="is-animating from-route-home to-route-project">
@@ -84,6 +85,7 @@ reflecting the identified route names of the current and next page.
 
 You can then choose between animations based on the identified routes.
 
+<!-- prettier-ignore -->
 ```css
 .transition-default {
   transition: 300ms opacity ease-in-out, 300ms transform ease-in-out;
@@ -106,6 +108,7 @@ html.is-animating.from-route-home .transition-default {
 If from and to routes are identical, it will add the class `to-same-route`. This
 is mostly useful to disable transitions between pages with identical layout.
 
+<!-- prettier-ignore -->
 ```html
 <html class="is-animating from-route-project to-route-project to-same-route">
 ```
@@ -116,6 +119,7 @@ When the `paths` option is enabled, the plugin will add `from-*` and
 `to-*` classes to the `html` tag, reflecting the raw URLs of the current and
 next page.
 
+<!-- prettier-ignore -->
 ```html
 <!-- Navigating from /about/ to /team/ -->
 <html class="is-animating from-about to-team">

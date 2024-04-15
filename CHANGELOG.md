@@ -1,7 +1,5 @@
 # Changelog
 
-<!-- ## [Unreleased] -->
-
 ## [4.1.0] - 2023-08-09
 
 - Port to TypeScript
@@ -33,8 +31,6 @@
 ## [1.0.0] - 2022-06-30
 
 - Initial release
-
-[Unreleased]: https://github.com/swup/route-name-plugin/compare/4.1.0...HEAD
 
 [4.1.0]: https://github.com/swup/route-name-plugin/releases/tag/4.1.0
 [4.0.0]: https://github.com/swup/route-name-plugin/releases/tag/4.0.0
