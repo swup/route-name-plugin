@@ -21,7 +21,7 @@ describe('SwupRouteNamePlugin', () => {
 		swup = new Swup();
 		plugin = new SwupRouteNamePlugin({
 			routes: [
-				{ name: 'home', path: '/' },
+				{ name: 'home', path: '' },
 				{ name: 'about', path: '/about' },
 				{ name: 'user', path: '/users/:id' }
 			]
@@ -29,7 +29,7 @@ describe('SwupRouteNamePlugin', () => {
 		swup.use(plugin);
 
 		// @ts-ignore - createVisit is marked internal
-		visit = swup.createVisit({ to: '/about', from: '/' });
+		visit = swup.createVisit({ to: '/about', from: '' });
 		visit.to.document = new window.DOMParser().parseFromString(
 			'<html><head></head><body></body></html>',
 			'text/html'
@@ -39,26 +39,34 @@ describe('SwupRouteNamePlugin', () => {
 	afterEach(() => {
 		swup.unuse(plugin);
 		swup.destroy();
+		vi.resetAllMocks();
 	});
 
 	describe('visit object', () => {
-		it('adds a route name to the visit object', async () => {
+		it('adds a route name to each visit object', async () => {
 			await swup.hooks.call('visit:start', visit, undefined);
 			expect(visit).toMatchObject({
-				from: { url: '/', route: 'home' },
+				from: { url: '', route: 'home' },
 				to: { url: '/about', route: 'about' }
+			});
+		});
+
+		it('amends the initial visit object', async () => {
+			expect(swup.visit).toMatchObject({
+				to: { url: '', route: 'home' }
 			});
 		});
 	});
 
 	describe('history', async () => {
-		it('updates the history entry', async () => {
+		it('updates the history entry with the visit route', async () => {
 			await swup.hooks.call('visit:start', visit, undefined);
 			await swup.hooks.call('content:replace', visit, { page: { url: '/about', html: '' } });
+			expect(updateHistoryRecord).toHaveBeenCalledWith(undefined, { route: 'about' });
+		});
 
-			expect(updateHistoryRecord).toHaveBeenCalledWith(undefined, {
-				route: 'about'
-			});
+		it('amends the initial history entry', async () => {
+			expect(updateHistoryRecord).toHaveBeenCalledWith(undefined, { route: 'home' });
 		});
 	});
 });
