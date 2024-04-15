@@ -60,8 +60,7 @@ export default class SwupRouteNamePlugin extends Plugin {
 		this.updateHistory(this.swup.visit);
 
 		this.before('visit:start', this.addRouteKey);
-		this.on('animation:out:start', this.addPathClasses);
-		this.on('animation:out:start', this.addRouteClasses);
+		this.on('animation:out:start', this.addClasses);
 		this.on('content:replace', this.updateHistory);
 		this.on('animation:in:end', this.removeClasses);
 	}
@@ -80,10 +79,18 @@ export default class SwupRouteNamePlugin extends Plugin {
 		);
 	}
 
+	// Add corresponding path classnames to html tag
+	addClasses(visit: Visit) {
+		if (this.routes.length) {
+			this.addRouteClasses(visit);
+		}
+		if (this.options.paths) {
+			this.addPathClasses(visit);
+		}
+	}
+
 	// Add `from-route-*` and `to-route-*` classnames to html tag
 	addRouteClasses(visit: Visit) {
-		if (!this.routes.length) return;
-
 		const from = visit.from.route;
 		const to = visit.to.route;
 		const unknown = this.options.unknownRoute;
@@ -101,8 +108,6 @@ export default class SwupRouteNamePlugin extends Plugin {
 
 	// Add `from-*` and `to-*` classnames for slugified path
 	addPathClasses(visit: Visit) {
-		if (!this.options.paths) return;
-
 		const from = getPathName(visit.from.url);
 		const to = getPathName(visit.to.url!);
 
