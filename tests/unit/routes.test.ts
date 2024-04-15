@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { compileRoutePattern, compileRoutePatterns, getPathName, getRouteName } from '../../src/routes.js';
+import {
+	compileRoutePattern,
+	compileRoutePatterns,
+	getPathName,
+	getRouteName
+} from '../../src/routes.js';
 
 describe('routes', () => {
 	describe('compileRoutePattern', () => {
